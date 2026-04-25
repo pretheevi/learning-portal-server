@@ -5,6 +5,8 @@ import InitializeTables from './Database/initializeDb.js'
 import authRoute from './Routers/Authentication/auth.js'
 import assignmentRoute from './Routers/Dashboard/assignment.js'
 import questionRoute from './Routers/Dashboard/question.js'
+import profileRoute from './Routers/Dashboard/profile.js'
+import CodeRoute from './Routers/Dashboard/code.js'
 const app = express()
 async function initializeServerAndDatabase() {
   try {
@@ -23,11 +25,11 @@ async function initializeServerAndDatabase() {
 initializeServerAndDatabase()
 
 app.use(cors({
-  origin: 'http://localhost:5173',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
+  origin: ['http://192.168.1.6:5173', 'http://localhost:5173', 'http://10.166.1.174:5173/'],
+  credentials: true,
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization']
 }))
-
 
 app.use((req, res, next) => {
   const method = req.method
@@ -45,4 +47,7 @@ app.get('/health', (req, res) => {
 app.use('/api/auth', authRoute)
 app.use('/api/dashboard', assignmentRoute)
 app.use('/api/dashboard', questionRoute)
+app.use('/api/dashboard', profileRoute)
+app.use('/api/dashboard', CodeRoute)
+
 

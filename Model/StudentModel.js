@@ -66,7 +66,7 @@ class StudentModel extends Abs {
 
 static async read(id = null, email = null) {
   const db = await this.getDb()
-  let query = 'SELECT student_id, email, password_hash FROM students'
+  let query = 'SELECT student_id, name, email, password_hash, avatar, bio, created_at FROM students'
   const conditions = []
   const values = []
   if (id) {

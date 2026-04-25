@@ -4,19 +4,20 @@ class Assignment{
   static async getDb() {
     return await connectDb()
   }
-  static async getAssignment(type, limit=10, offset=0) {
-    if(!type) return false
+  static async getAssignment(assignmentType, language, limit=10, offset=0) {
+    if(!assignmentType) return false
     let query = `
       SELECT *
       FROM assignments
-      WHERE type = ?
+      WHERE type = ? AND title LIKE ?
       ORDER BY created_at DESC
       LIMIT ? 
       OFFSET ?
     `
     try{
       const db = await Assignment.getDb()
-      const result = await db.all(query, [type, limit, offset])
+      const likePattern = `%${language}%`
+      const result = await db.all(query, [assignmentType, likePattern, limit, offset])
       return result
     } catch(err) {
       throw err

@@ -9,8 +9,10 @@ import QuizQuestionsModel from '../../Model/QuizQuestionsModel.js'
 router
   .get('/assignment', Jsonwebtoken.verify,  AssignmentValidation.getAssignment, async (req, res) => {
     try{
-      const {type, limit, offset} = req.query
-      const result = await Assignment.getAssignment(type, Number(limit), Number(offset))
+      console.log('aaaaaaaaaa')
+      const {assignmentType, language, limit, offset} = req.query
+      const result = await Assignment.getAssignment(assignmentType, language, Number(limit), Number(offset))
+      console.log(result, 'bbbbbbbbbb')
       return ResponseHandler(res, 200, 'success', result)
     } catch (err) {
       ErrorHandler.Error500(res)

@@ -2,16 +2,20 @@ import ErrorHandler from "../Error/ErrorHandler.js";
 
 class AssignmentValidation{
   static getAssignment(req, res, next) {
-    const types = ['quiz', 'code', 'both']
-    const {type, limit, offset} = req.query
-    
-    if(!type || !types.includes(type)) 
-      return ErrorHandler.Error400(res, 'Invalid Assignment Type')
+      const validTypes = ['quiz', 'coding']
+      const validLanguages = ['HTML', 'CSS', 'Javascript', 'LinuxOS', 'OS', 'Github', 'ReactJS', 'NodeJS', 'SQLite', 'Aptitude']
+      const { assignmentType, language, limit, offset } = req.query
 
-    if(!limit || !offset || Number(limit) < 0 || Number(offset) < 0) 
-      return ErrorHandler.Error400(res, 'Invalid Credentials')
-    
-    next()
+      if (!assignmentType || !validTypes.includes(assignmentType))
+        return ErrorHandler.Error400(res, 'Invalid Assignment Type')
+
+      if (!language || !validLanguages.includes(language))
+        return ErrorHandler.Error400(res, 'Invalid Language')
+
+      if (!limit || !offset || Number(limit) <= 0 || Number(offset) < 0)
+        return ErrorHandler.Error400(res, 'Invalid Pagination Values')
+
+      next()
   }
 
   static assignmentIdValidate(req, res, next) {
