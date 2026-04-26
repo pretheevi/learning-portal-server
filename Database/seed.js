@@ -1,4 +1,4 @@
-// seed.js
+// seed-css-grid-quiz.js
 import connectDb from './connectDb.js'
 import { randomUUID } from 'crypto'
 
@@ -6,235 +6,149 @@ const assignmentId = randomUUID()
 
 const assignment = {
   assignment_id: assignmentId,
-  title: 'Aptitude - Percentage, P/L, D, Simple Interest',
+  title: 'CSS Grid Layout',
   date: new Date().toISOString().split('T')[0],
-  type: 'quiz'
+  type: 'quiz',
+  skill_type: 'css'
 }
 
 const questions = [
-  // PERCENTAGE
+  // GRID CONTAINER
   {
-    question_text: 'What is 25% of 200?',
-    option_a: '40',
-    option_b: '25',
-    option_c: '50',
-    option_d: '75',
-    correct_option: 'c',
-    explanation: '25% of 200 = (25/100) × 200 = 50.',
+    question_text: 'Which CSS property is used to make an element a grid container?',
+    option_a: 'display: flex',
+    option_b: 'display: grid',
+    option_c: 'position: grid',
+    option_d: 'layout: grid',
+    correct_option: 'b',
+    explanation: 'display: grid turns an element into a grid container. All direct children automatically become grid items.',
     points: 10,
     order_num: 1
   },
   {
-    question_text: 'A student scored 450 marks out of 600. What is the percentage scored?',
-    option_a: '70%',
-    option_b: '80%',
-    option_c: '65%',
-    option_d: '75%',
-    correct_option: 'd',
-    explanation: 'Percentage = (Scored / Total) × 100 = (450 / 600) × 100 = 75%.',
+    question_text: 'What does "grid-template-columns: repeat(3, 1fr)" create?',
+    option_a: 'Three rows of equal height',
+    option_b: 'Three columns each taking 1px',
+    option_c: 'Three equal-width columns that share available space',
+    option_d: 'One column repeated 3 times with fixed width',
+    correct_option: 'c',
+    explanation: 'repeat(3, 1fr) creates 3 columns each with 1 fraction unit — they share the available space equally, so each column is 1/3 of the container width.',
     points: 10,
     order_num: 2
   },
   {
-    question_text: 'If a number is increased by 20% and then decreased by 20%, what is the net change?',
-    option_a: 'No change',
-    option_b: '4% decrease',
-    option_c: '4% increase',
-    option_d: '2% decrease',
-    correct_option: 'b',
-    explanation: 'Let number = 100. After 20% increase = 120. After 20% decrease = 120 × 0.8 = 96. Net change = 4% decrease.',
+    question_text: 'Which property defines the gap between grid rows AND columns at once?',
+    option_a: 'grid-gap (now called gap)',
+    option_b: 'grid-spacing',
+    option_c: 'margin: auto',
+    option_d: 'padding: gap',
+    correct_option: 'a',
+    explanation: 'The gap property (previously grid-gap) sets spacing between rows and columns. You can also use row-gap and column-gap separately.',
     points: 10,
     order_num: 3
   },
   {
-    question_text: 'What percentage is 75 of 300?',
-    option_a: '20%',
-    option_b: '30%',
-    option_c: '25%',
-    option_d: '15%',
-    correct_option: 'c',
-    explanation: 'Percentage = (75 / 300) × 100 = 25%.',
+    question_text: 'What does "grid-template-columns: 200px auto 1fr" create?',
+    option_a: 'Three equal columns',
+    option_b: 'First column 200px, second fits content, third takes remaining space',
+    option_c: 'All three columns share space equally',
+    option_d: 'First column auto, second 200px, third 1fr',
+    correct_option: 'b',
+    explanation: 'Each value defines one column: 200px is fixed, auto sizes to content, and 1fr takes all remaining space after the first two columns are sized.',
     points: 10,
     order_num: 4
   },
   {
-    question_text: 'A salary of ₹20,000 is increased by 15%. What is the new salary?',
-    option_a: '₹22,000',
-    option_b: '₹23,500',
-    option_c: '₹21,500',
-    option_d: '₹23,000',
-    correct_option: 'd',
-    explanation: 'Increase = 15% of 20000 = 3000. New salary = 20000 + 3000 = ₹23,000.',
+    question_text: 'Which property on a grid container controls how items are aligned horizontally within their cells?',
+    option_a: 'align-items',
+    option_b: 'justify-content',
+    option_c: 'justify-items',
+    option_d: 'place-items',
+    correct_option: 'c',
+    explanation: 'justify-items aligns grid items along the row axis (horizontal) inside their grid area. align-items does the same on the column axis (vertical).',
     points: 10,
     order_num: 5
   },
-  // PROFIT AND LOSS
+  // GRID ITEMS
   {
-    question_text: 'A shopkeeper buys a book for ₹80 and sells it for ₹100. What is the profit percentage?',
-    option_a: '20%',
-    option_b: '15%',
-    option_c: '25%',
-    option_d: '10%',
-    correct_option: 'c',
-    explanation: 'Profit = 100 - 80 = ₹20. Profit% = (Profit / Cost Price) × 100 = (20 / 80) × 100 = 25%.',
+    question_text: 'What does "grid-column: 1 / 3" mean on a grid item?',
+    option_a: 'The item spans columns 1 and 3 only',
+    option_b: 'The item starts at column line 1 and ends at column line 3, spanning 2 columns',
+    option_c: 'The item is placed in the 3rd column',
+    option_d: 'The item spans 1/3 of the grid width',
+    correct_option: 'b',
+    explanation: 'grid-column: 1 / 3 means start at grid line 1 and end at grid line 3 — this spans across 2 column tracks.',
     points: 10,
     order_num: 6
   },
   {
-    question_text: 'A cycle bought for ₹1500 is sold for ₹1200. What is the loss percentage?',
-    option_a: '25%',
-    option_b: '15%',
-    option_c: '20%',
-    option_d: '10%',
+    question_text: 'How do you make a grid item span 2 rows?',
+    option_a: 'grid-row: 2',
+    option_b: 'row-span: 2',
+    option_c: 'grid-row: span 2',
+    option_d: 'grid-rows: 1 / 2',
     correct_option: 'c',
-    explanation: 'Loss = 1500 - 1200 = ₹300. Loss% = (300 / 1500) × 100 = 20%.',
+    explanation: 'grid-row: span 2 tells the item to span across 2 row tracks from wherever it is placed. You can also use grid-row: 1 / 3 for explicit placement.',
     points: 10,
     order_num: 7
   },
   {
-    question_text: 'If cost price = ₹500 and profit% = 20%, what is the selling price?',
-    option_a: '₹580',
-    option_b: '₹620',
-    option_c: '₹600',
-    option_d: '₹550',
+    question_text: 'Which shorthand property sets both grid-row and grid-column at once?',
+    option_a: 'grid-span',
+    option_b: 'grid-placement',
+    option_c: 'grid-area',
+    option_d: 'grid-position',
     correct_option: 'c',
-    explanation: 'Selling Price = Cost Price × (1 + Profit%/100) = 500 × 1.2 = ₹600.',
+    explanation: 'grid-area is the shorthand: grid-area: row-start / column-start / row-end / column-end. It can also reference a named area from grid-template-areas.',
     points: 10,
     order_num: 8
   },
+  // GRID vs FLEXBOX
   {
-    question_text: 'A shirt is sold for ₹630 at a loss of 10%. What is the cost price?',
-    option_a: '₹700',
-    option_b: '₹750',
-    option_c: '₹680',
-    option_d: '₹720',
-    correct_option: 'a',
-    explanation: 'SP = CP × (1 - Loss%/100). So 630 = CP × 0.9. CP = 630 / 0.9 = ₹700.',
+    question_text: 'What is the key difference between CSS Grid and Flexbox?',
+    option_a: 'Grid is for styling text, Flexbox is for images',
+    option_b: 'Grid is two-dimensional (rows + columns), Flexbox is one-dimensional (row OR column)',
+    option_c: 'Flexbox handles both rows and columns, Grid only handles rows',
+    option_d: 'Grid only works on block elements, Flexbox works on any element',
+    correct_option: 'b',
+    explanation: 'Flexbox is designed for one-dimensional layouts — either a row or a column. CSS Grid is designed for two-dimensional layouts — rows and columns together.',
     points: 10,
     order_num: 9
   },
+  // GRID TEMPLATE AREAS
   {
-    question_text: 'A trader marks an item at ₹1000 and sells it at ₹900. What is the loss percentage?',
-    option_a: '5%',
-    option_b: '10%',
-    option_c: '15%',
-    option_d: '8%',
+    question_text: 'What does grid-template-areas allow you to do?',
+    option_a: 'Define column widths using named templates',
+    option_b: 'Name regions of the grid and assign items to them by name',
+    option_c: 'Set how many areas are hidden in a grid',
+    option_d: 'Limit the grid to a specific area on screen',
     correct_option: 'b',
-    explanation: 'Loss = 1000 - 900 = ₹100. Loss% = (100 / 1000) × 100 = 10%.',
+    explanation: 'grid-template-areas lets you visually define the layout using names. Then assign grid items to areas using grid-area: header or grid-area: sidebar etc.',
     points: 10,
     order_num: 10
   },
-  // DISCOUNT
   {
-    question_text: 'A TV has a marked price of ₹10,000. A 15% discount is given. What is the selling price?',
-    option_a: '₹8,000',
-    option_b: '₹9,000',
-    option_c: '₹8,500',
-    option_d: '₹7,500',
+    question_text: 'In grid-template-areas, what does a "." (dot) represent?',
+    option_a: 'An error in syntax',
+    option_b: 'A gap between columns',
+    option_c: 'An empty cell with no named area',
+    option_d: 'A full-width spanning area',
     correct_option: 'c',
-    explanation: 'Discount = 15% of 10000 = ₹1500. Selling Price = 10000 - 1500 = ₹8,500.',
+    explanation: 'A dot in grid-template-areas represents an unnamed/empty cell. It is a placeholder that occupies space without being assigned to any grid item.',
     points: 10,
     order_num: 11
   },
+  // AUTO-FILL vs AUTO-FIT
   {
-    question_text: 'What is the discount percentage if marked price is ₹500 and selling price is ₹425?',
-    option_a: '10%',
-    option_b: '20%',
-    option_c: '12%',
-    option_d: '15%',
-    correct_option: 'd',
-    explanation: 'Discount = 500 - 425 = ₹75. Discount% = (75 / 500) × 100 = 15%.',
+    question_text: 'What is the difference between auto-fill and auto-fit in repeat()?',
+    option_a: 'auto-fill creates empty columns if items run out, auto-fit collapses them',
+    option_b: 'auto-fit fills columns with content, auto-fill is for rows',
+    option_c: 'They are identical and interchangeable',
+    option_d: 'auto-fill is for fixed widths, auto-fit is for fractional widths',
+    correct_option: 'a',
+    explanation: 'With auto-fill, empty tracks are preserved as space. With auto-fit, empty tracks collapse to 0 width, letting filled tracks stretch to fill the container.',
     points: 10,
     order_num: 12
-  },
-  {
-    question_text: 'A product with marked price ₹800 is sold after two successive discounts of 10% and 5%. What is the final price?',
-    option_a: '₹684',
-    option_b: '₹700',
-    option_c: '₹660',
-    option_d: '₹720',
-    correct_option: 'a',
-    explanation: 'After 10% discount: 800 × 0.9 = ₹720. After 5% discount: 720 × 0.95 = ₹684.',
-    points: 10,
-    order_num: 13
-  },
-  {
-    question_text: 'A shopkeeper offers a 20% discount and still makes a 25% profit. If cost price is ₹400, what is the marked price?',
-    option_a: '₹600',
-    option_b: '₹650',
-    option_c: '₹500',
-    option_d: '₹625',
-    correct_option: 'd',
-    explanation: 'SP = 400 × 1.25 = ₹500. SP = MP × (1 - 0.20). So MP = 500 / 0.8 = ₹625.',
-    points: 10,
-    order_num: 14
-  },
-  {
-    question_text: 'A bill of ₹2000 is paid after a 5% discount. How much is paid?',
-    option_a: '₹1,900',
-    option_b: '₹1,800',
-    option_c: '₹1,850',
-    option_d: '₹1,950',
-    correct_option: 'a',
-    explanation: 'Discount = 5% of 2000 = ₹100. Amount paid = 2000 - 100 = ₹1,900.',
-    points: 10,
-    order_num: 15
-  },
-  // SIMPLE INTEREST
-  {
-    question_text: 'What is the formula for Simple Interest?',
-    option_a: 'SI = P × R × T',
-    option_b: 'SI = (P × R × T) / 100',
-    option_c: 'SI = P + R + T',
-    option_d: 'SI = P × (1 + R/100)^T',
-    correct_option: 'b',
-    explanation: 'Simple Interest = (Principal × Rate × Time) / 100. The last option is compound interest formula.',
-    points: 10,
-    order_num: 16
-  },
-  {
-    question_text: 'Find the simple interest on ₹5000 at 10% per annum for 2 years.',
-    option_a: '₹500',
-    option_b: '₹1,500',
-    option_c: '₹1,000',
-    option_d: '₹2,000',
-    correct_option: 'c',
-    explanation: 'SI = (5000 × 10 × 2) / 100 = 1,00,000 / 100 = ₹1,000.',
-    points: 10,
-    order_num: 17
-  },
-  {
-    question_text: 'A sum of ₹8000 is invested at 5% per annum. In how many years will SI be ₹2000?',
-    option_a: '6 years',
-    option_b: '4 years',
-    option_c: '5 years',
-    option_d: '3 years',
-    correct_option: 'c',
-    explanation: 'T = (SI × 100) / (P × R) = (2000 × 100) / (8000 × 5) = 2,00,000 / 40,000 = 5 years.',
-    points: 10,
-    order_num: 18
-  },
-  {
-    question_text: 'What is the rate of interest if ₹4000 earns ₹1200 as simple interest in 3 years?',
-    option_a: '8%',
-    option_b: '12%',
-    option_c: '10%',
-    option_d: '15%',
-    correct_option: 'c',
-    explanation: 'R = (SI × 100) / (P × T) = (1200 × 100) / (4000 × 3) = 1,20,000 / 12,000 = 10%.',
-    points: 10,
-    order_num: 19
-  },
-  {
-    question_text: 'The simple interest on a sum is ₹900 at 6% per annum for 5 years. What is the principal?',
-    option_a: '₹2,500',
-    option_b: '₹3,500',
-    option_c: '₹3,000',
-    option_d: '₹2,000',
-    correct_option: 'c',
-    explanation: 'P = (SI × 100) / (R × T) = (900 × 100) / (6 × 5) = 90,000 / 30 = ₹3,000.',
-    points: 10,
-    order_num: 20
   }
 ]
 
@@ -248,8 +162,8 @@ async function seed() {
     transaction = true
 
     await db.run(
-      `INSERT INTO assignments (assignment_id, title, date, type) VALUES (?, ?, ?, ?)`,
-      [assignment.assignment_id, assignment.title, assignment.date, assignment.type]
+      `INSERT INTO assignments (assignment_id, title, date, type, skill_type) VALUES (?, ?, ?, ?, ?)`,
+      [assignment.assignment_id, assignment.title, assignment.date, assignment.type, assignment.skill_type]
     )
     console.log(`✅ Assignment inserted: ${assignment.title}`)
 
@@ -259,25 +173,41 @@ async function seed() {
           (question_id, assignment_id, question_text, option_a, option_b, option_c, option_d, correct_option, explanation, points, order_num)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
-          randomUUID(),
-          assignmentId,
-          q.question_text,
-          q.option_a,
-          q.option_b,
-          q.option_c,
-          q.option_d,
-          q.correct_option,
-          q.explanation,
-          q.points,
-          q.order_num
+          randomUUID(), assignmentId,
+          q.question_text, q.option_a, q.option_b, q.option_c, q.option_d,
+          q.correct_option, q.explanation, q.points, q.order_num
         ]
       )
       console.log(`  ✅ Q${q.order_num}: ${q.question_text.slice(0, 50)}...`)
     }
 
+    // seed student_assignment_access
+    const existing = await db.get(
+      `SELECT COUNT(*) as count FROM assignments 
+       WHERE skill_type = ? AND type = ? AND assignment_id != ?`,
+      [assignment.skill_type, assignment.type, assignment.assignment_id]
+    )
+    const isFirst = existing.count === 0
+    console.log(`\n📌 Is first ${assignment.type} for ${assignment.skill_type}? ${isFirst}`)
+
+    const students = await db.all(`SELECT student_id FROM students`)
+    for (const s of students) {
+      await db.run(
+        `INSERT OR IGNORE INTO student_assignment_access 
+          (access_id, student_id, assignment_id, is_unlocked, unlocked_at)
+         VALUES (?, ?, ?, ?, ?)`,
+        [
+          randomUUID(), s.student_id, assignment.assignment_id,
+          isFirst ? 1 : 0,
+          isFirst ? new Date().toISOString() : null
+        ]
+      )
+    }
+    console.log(`✅ Access seeded for ${students.length} students (is_unlocked: ${isFirst ? 1 : 0})`)
+
     await db.exec('COMMIT')
     transaction = false
-    console.log('\n🎉 Seeding complete! 20 CSS Flexbox questions inserted.')
+    console.log('\n🎉 Seeding complete! 12 CSS Grid questions inserted.')
   } catch (err) {
     if (db && transaction) await db.exec('ROLLBACK')
     console.error('❌ Seeding failed:', err.message)

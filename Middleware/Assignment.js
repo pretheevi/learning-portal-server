@@ -3,7 +3,7 @@ import ErrorHandler from "../Error/ErrorHandler.js";
 class AssignmentValidation{
   static getAssignment(req, res, next) {
       const validTypes = ['quiz', 'coding']
-      const validLanguages = ['HTML', 'CSS', 'Javascript', 'LinuxOS', 'OS', 'Github', 'ReactJS', 'NodeJS', 'SQLite', 'Aptitude']
+      const validLanguages = ['html', 'css', 'javascript', 'linux', 'os', 'github', 'react', 'node', 'sqlite', 'aptitude']
       const { assignmentType, language, limit, offset } = req.query
 
       if (!assignmentType || !validTypes.includes(assignmentType))

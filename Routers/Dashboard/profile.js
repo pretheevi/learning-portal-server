@@ -6,12 +6,20 @@ import Jsonwebtoken from '../../Middleware/Jsonwebtoken.js'
 import StudentModel from '../../Model/StudentModel.js'
 router  
   .get('/profile', Jsonwebtoken.verify, async (req, res) => {
-    try{
-      const {student_id} = req.token
-      const result = await StudentModel.read(student_id)
-      return ResponseHandler(res, 200, 'success', result)
+    try {
+      const { student_id } = req.token
+
+      const [student, stats] = await Promise.all([
+        StudentModel.read(student_id),          // lightweight
+        StudentModel.getStudentSkillStats(student_id)  // heavy — runs in parallel
+      ])
+
+      return ResponseHandler(res, 200, 'success', {
+        ...student,
+        stats
+      })
     } catch (err) {
-      return ErrorHandler.Error500(err, res)
+      ErrorHandler.Error500(err, res)
     }
   })
 

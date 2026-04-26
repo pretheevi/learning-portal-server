@@ -67,6 +67,9 @@ class StudentModel extends Abs {
 static async read(id = null, email = null) {
   const db = await this.getDb()
   let query = 'SELECT student_id, name, email, password_hash, avatar, bio, created_at FROM students'
+  let query2 = `
+  
+  `
   const conditions = []
   const values = []
   if (id) {
@@ -82,6 +85,56 @@ static async read(id = null, email = null) {
   }
   return await db.get(query, values)
 }
+
+  static async getStudentSkillStats(student_id) {
+    const db = await StudentModel.getDb()
+
+    const rows = await db.all(`
+      WITH best_scores AS (
+        SELECT 
+          ds.assignment_id,
+          MAX(ds.total_score) AS best_score
+        FROM daily_scores ds
+        WHERE ds.student_id = ?
+        GROUP BY ds.assignment_id
+      ),
+      assignment_possible AS (
+        SELECT assignment_id, SUM(points) AS possible_score
+        FROM quiz_questions
+        GROUP BY assignment_id
+
+        UNION ALL
+
+        SELECT cp.assignment_id, SUM(tc.point) AS possible_score
+        FROM coding_problem_testcases tc
+        JOIN coding_problems cp ON cp.problem_id = tc.problem_id
+        GROUP BY cp.assignment_id
+      )
+      SELECT
+        a.skill_type,
+        a.type,
+        SUM(bs.best_score)     AS earned,
+        SUM(ap.possible_score) AS possible,
+        ROUND(SUM(bs.best_score) * 100.0 / SUM(ap.possible_score), 1) AS percentage
+      FROM best_scores bs
+      JOIN assignments a ON a.assignment_id = bs.assignment_id
+      JOIN assignment_possible ap ON ap.assignment_id = bs.assignment_id
+      GROUP BY a.skill_type, a.type
+      ORDER BY a.skill_type, a.type
+    `, [student_id])
+
+    // ✅ transform flat rows into { quiz: {}, coding: {} }
+    const result = { quiz: {}, coding: {} }
+
+    for (const row of rows) {
+      const { type, skill_type, earned, possible, percentage } = row
+      if (!result[type]) continue   // ignore unknown types
+
+      result[type][skill_type] = { earned, possible, percentage }
+    }
+
+    return result
+  }
 
   update() {}
   delete() {}

@@ -7,12 +7,17 @@ import AssignmentValidation from '../../Middleware/Assignment.js'
 import Jsonwebtoken from '../../Middleware/Jsonwebtoken.js'
 import QuizQuestionsModel from '../../Model/QuizQuestionsModel.js'
 router
-  .get('/assignment', Jsonwebtoken.verify,  AssignmentValidation.getAssignment, async (req, res) => {
-    try{
-      console.log('aaaaaaaaaa')
-      const {assignmentType, language, limit, offset} = req.query
-      const result = await Assignment.getAssignment(assignmentType, language, Number(limit), Number(offset))
-      console.log(result, 'bbbbbbbbbb')
+  .get('/assignment', Jsonwebtoken.verify, AssignmentValidation.getAssignment, async (req, res) => {
+    try {
+      const { student_id } = req.token                          // ✅ from JWT
+      const { assignmentType, language, limit, offset } = req.query
+      const result = await Assignment.getAssignment(
+        student_id,
+        assignmentType,
+        language,
+        Number(limit) || 10,
+        Number(offset) || 0
+      )
       return ResponseHandler(res, 200, 'success', result)
     } catch (err) {
       ErrorHandler.Error500(res)
@@ -29,10 +34,10 @@ router
   })
   .post('/assignment/:assignment_id/submission', Jsonwebtoken.verify, AssignmentValidation.assignmentSubmitValidation, async (req, res) => {
     try {
-      const {student_id} = req.token
+      const { student_id } = req.token
       const { assignment_id } = req.params
-      const { quiz_score } = req.body
-      await Assignment.assignmentSubmit(student_id, assignment_id, quiz_score)
+      const { quiz_score, total_possible_score } = req.body   // ✅ add total_possible_score
+      await Assignment.assignmentSubmit(student_id, assignment_id, quiz_score, total_possible_score)
       return ResponseHandler(res, 200, 'success', student_id)
     } catch (err) {
       ErrorHandler.Error500(err, res)
