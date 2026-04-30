@@ -22,7 +22,9 @@ class InitializeTables {
       await db.exec(this.codingProblemExamplesTable())
       await db.exec(this.codingProblemTestcasesTable())
       await db.exec(this.codeSubmissionsTable())
-
+      await db.exec(this.adminTable())
+      await db.exec(this.announcementTable())
+      
       await db.exec(this.dailyScoresTable())
       await db.exec(this.index())
 
@@ -49,13 +51,14 @@ class InitializeTables {
   }
 
   assignmentTable() {
-    return `
+  return `
     CREATE TABLE IF NOT EXISTS assignments (
       assignment_id TEXT PRIMARY KEY,
       title         TEXT NOT NULL CHECK(length(title) <= 200),
       date          DATE NOT NULL,
       type          TEXT NOT NULL CHECK(type IN ('quiz','coding','both')),
       skill_type    TEXT,
+      order_num     INTEGER NOT NULL DEFAULT 1,
       created_at    DATETIME DEFAULT CURRENT_TIMESTAMP
     );`
   }
@@ -183,6 +186,29 @@ class InitializeTables {
       FOREIGN KEY (student_id) REFERENCES students(student_id),
       FOREIGN KEY (assignment_id) REFERENCES assignments(assignment_id),
       UNIQUE(student_id, assignment_id, attempt_no)
+    );`
+  }
+
+  adminTable() {
+    return `
+    CREATE TABLE IF NOT EXISTS admins (
+      admin_id      TEXT PRIMARY KEY,
+      name          TEXT NOT NULL,
+      email         TEXT NOT NULL UNIQUE,
+      password_hash TEXT NOT NULL,
+      created_at    DATETIME DEFAULT CURRENT_TIMESTAMP
+    );`
+  }
+
+  announcementTable() {
+    return `
+    CREATE TABLE IF NOT EXISTS announcements (
+      announcement_id  TEXT PRIMARY KEY,
+      message          TEXT NOT NULL CHECK(length(message) <= 1000),
+      sent_by          TEXT NOT NULL,
+      type             TEXT DEFAULT 'general' CHECK(type IN ('general','warning','success','info')),
+      created_at       DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (sent_by) REFERENCES admins(admin_id)
     );`
   }
 

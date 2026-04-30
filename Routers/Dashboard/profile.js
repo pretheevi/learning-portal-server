@@ -4,8 +4,9 @@ import ErrorHandler from '../../Error/ErrorHandler.js'
 import ResponseHandler from '../../Response/Response.js'
 import Jsonwebtoken from '../../Middleware/Jsonwebtoken.js'
 import StudentModel from '../../Model/StudentModel.js'
+import ProfileLimit from '../../rateLimiter/profileLimiter.js'
 router  
-  .get('/profile', Jsonwebtoken.verify, async (req, res) => {
+  .get('/profile', ProfileLimit.getProfile, Jsonwebtoken.verify, async (req, res) => {
     try {
       const { student_id } = req.token
 

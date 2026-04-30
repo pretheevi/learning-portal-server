@@ -1,40 +1,52 @@
+import joi from "joi";
 import ErrorHandler from "../Error/ErrorHandler.js";
 
 class AuthValidator {
-  static emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  static nameRegex = /^[A-Za-z ]{2,50}$/;
+  // Joi schemas
+  static signInSchema = joi.object({
+    email: joi.string().email().required().messages({
+      'string.email': 'Invalid email',
+      'any.required': 'Email is required'
+    }),
+    password: joi.string().min(6).required().messages({
+      'string.min': 'Password must be at least 6 characters',
+      'any.required': 'Password is required'
+    })
+  });
+
+  static signUpSchema = joi.object({
+    name: joi.string().min(2).max(50).required().messages({
+      'string.min': 'Name must be at least 2 characters',
+      'string.max': 'Name must not exceed 50 characters',
+      'any.required': 'Name is required'
+    }),
+    email: joi.string().email().required().messages({
+      'string.email': 'Invalid email',
+      'any.required': 'Email is required'
+    }),
+    password: joi.string().min(6).required().messages({
+      'string.min': 'Password must be at least 6 characters',
+      'any.required': 'Password is required'
+    })
+  });
 
   static signInValidate(req, res, next) {
     try {
-      console.log('sig in ',req.body)
-      if (!req.body || typeof req.body !== 'object')
-        return ErrorHandler.Error400(res, 'Invalid Credentials')
-      const { email, password } = req.body
-      if (!email || !AuthValidator.emailRegex.test(email))
-        return ErrorHandler.Error400(res, "Invalid email")
-      if (!password || password.length < 6) 
-        return ErrorHandler.Error400(res, "Invalid password")
-      next()
+      const { error } = AuthValidator.signInSchema.validate(req.body, { abortEarly: true });
+      if (error) return ErrorHandler.Error400(res, error.details[0].message);
+      next();
     } catch (err) {
-      next(err)
+      next(err);
     }
   }
 
   static signUpValidate(req, res, next) {
     try {
-      console.log(req.body)
-      if (!req.body || typeof req.body !== 'object')
-        return ErrorHandler.Error400(res, "Invalid Credentials")
-      const { name, email, password } = req.body
-      if (!name || !AuthValidator.nameRegex.test(name)) 
-        return ErrorHandler.Error400(res, "Invalid name")
-      if (!email || !AuthValidator.emailRegex.test(email)) 
-        return ErrorHandler.Error400(res, "Invalid email")
-      if (!password || password.length < 6) 
-        return ErrorHandler.Error400(res, "Password too short")
-      next()
+      const { error } = AuthValidator.signUpSchema.validate(req.body, { abortEarly: true });
+      if (error) return ErrorHandler.Error400(res, error.details[0].message);
+      next();
     } catch (err) {
-      next(err)
+      next(err);
     }
   }
 }

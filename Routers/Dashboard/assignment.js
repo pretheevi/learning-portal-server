@@ -6,15 +6,16 @@ import Assignment from '../../Model/assignmentModel.js'
 import AssignmentValidation from '../../Middleware/Assignment.js'
 import Jsonwebtoken from '../../Middleware/Jsonwebtoken.js'
 import QuizQuestionsModel from '../../Model/QuizQuestionsModel.js'
+import AssignmentLimit from '../../rateLimiter/assignmentLimit.js'
 router
-  .get('/assignment', Jsonwebtoken.verify, AssignmentValidation.getAssignment, async (req, res) => {
+  .get('/assignment', AssignmentLimit.getAssignment, Jsonwebtoken.verify, AssignmentValidation.getAssignment, async (req, res) => {
     try {
-      const { student_id } = req.token                          // ✅ from JWT
-      const { assignmentType, language, limit, offset } = req.query
+      const { student_id } = req.token
+      const { assignmentType, skill_type, limit, offset } = req.query
       const result = await Assignment.getAssignment(
         student_id,
         assignmentType,
-        language,
+        skill_type,
         Number(limit) || 10,
         Number(offset) || 0
       )
@@ -23,7 +24,7 @@ router
       ErrorHandler.Error500(res)
     }
   })
-  .get('/assignment/:id/questions', Jsonwebtoken.verify, AssignmentValidation.assignmentIdValidate, async (req, res) => {
+  .get('/assignment/:id/questions', AssignmentLimit.getAssignment, Jsonwebtoken.verify, AssignmentValidation.assignmentIdValidate, async (req, res) => {
     try{
       const {id} = req.params
       const result = await QuizQuestionsModel.getQuizQuestions(id)
@@ -32,7 +33,7 @@ router
       ErrorHandler.Error500(err, res)
     }
   })
-  .post('/assignment/:assignment_id/submission', Jsonwebtoken.verify, AssignmentValidation.assignmentSubmitValidation, async (req, res) => {
+  .post('/assignment/:assignment_id/submission', AssignmentLimit.submitAssignment, Jsonwebtoken.verify, AssignmentValidation.assignmentSubmitValidation, async (req, res) => {
     try {
       const { student_id } = req.token
       const { assignment_id } = req.params

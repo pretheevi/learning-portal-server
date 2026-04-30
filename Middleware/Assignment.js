@@ -1,38 +1,97 @@
+import joi from 'joi';
 import ErrorHandler from "../Error/ErrorHandler.js";
 
-class AssignmentValidation{
+class AssignmentValidation {
+  // Joi schemas
+  static getAssignmentSchema = joi.object({
+    assignmentType: joi.string()
+      .valid('quiz', 'coding')
+      .required()
+      .messages({
+        'any.only': 'Invalid Assignment Type',
+        'any.required': 'Assignment type is required'
+      }),
+    skill_type: joi.string()
+      .valid('html', 'css', 'javascript', 'linux', 'os', 'github', 'react', 'node', 'sqlite', 'aptitude')
+      .required()
+      .messages({
+        'any.only': 'Invalid Skill Type',
+        'any.required': 'Skill type is required'
+      }),
+    limit: joi.number()
+      .integer()
+      .positive()
+      .required()
+      .messages({
+        'number.positive': 'Limit must be greater than 0',
+        'any.required': 'Limit is required'
+      }),
+    offset: joi.number()
+      .integer()
+      .min(0)
+      .required()
+      .messages({
+        'number.min': 'Offset must be 0 or greater',
+        'any.required': 'Offset is required'
+      })
+  });
+
+  static assignmentIdSchema = joi.object({
+    id: joi.string()
+      .required()
+      .messages({
+        'any.required': 'Assignment id is required'
+      })
+  });
+
+  static assignmentSubmitSchema = joi.object({
+    assignment_id: joi.string()
+      .required()
+      .messages({
+        'any.required': 'assignment_id is required'
+      }),
+    quiz_score: joi.number()
+      .required()
+      .messages({
+        'any.required': 'quiz_score is required'
+      })
+  });
+
   static getAssignment(req, res, next) {
-      const validTypes = ['quiz', 'coding']
-      const validLanguages = ['html', 'css', 'javascript', 'linux', 'os', 'github', 'react', 'node', 'sqlite', 'aptitude']
-      const { assignmentType, language, limit, offset } = req.query
-
-      if (!assignmentType || !validTypes.includes(assignmentType))
-        return ErrorHandler.Error400(res, 'Invalid Assignment Type')
-
-      if (!language || !validLanguages.includes(language))
-        return ErrorHandler.Error400(res, 'Invalid Language')
-
-      if (!limit || !offset || Number(limit) <= 0 || Number(offset) < 0)
-        return ErrorHandler.Error400(res, 'Invalid Pagination Values')
-
-      next()
+    try {
+      const { error } = AssignmentValidation.getAssignmentSchema.validate(req.query, { abortEarly: true });
+      if (error)
+        return ErrorHandler.Error400(res, error.details[0].message);
+      next();
+    } catch (err) {
+      next(err);
+    }
   }
 
   static assignmentIdValidate(req, res, next) {
-    const { id } = req.params
-    if (!id) return ErrorHandler.Error400(res, 'Assignment id is required')
-    next()
+    try {
+      const { error } = AssignmentValidation.assignmentIdSchema.validate(req.params, { abortEarly: true });
+      if (error)
+        return ErrorHandler.Error400(res, error.details[0].message);
+      next();
+    } catch (err) {
+      next(err);
+    }
   }
 
   static assignmentSubmitValidation(req, res, next) {
-    if (!req.body || !(typeof req.body === 'object'))
-      return ErrorHandler.Error400(res, 'Invalid Credentials')
-    const { assignment_id } = req.params
-    const { quiz_score } = req.body
-    if (!assignment_id || !quiz_score && quiz_score !== 0)
-      return ErrorHandler.Error400(res, 'assignment_id and quiz_score are required')
-
-    next()
+    try {
+      const data = {
+        assignment_id: req.params.assignment_id,
+        quiz_score: req.body.quiz_score
+      };
+      const { error } = AssignmentValidation.assignmentSubmitSchema.validate(data, { abortEarly: true });
+      if (error)
+        return ErrorHandler.Error400(res, error.details[0].message);
+      next();
+    } catch (err) {
+      next(err);
+    }
   }
 }
 

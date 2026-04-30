@@ -3,11 +3,11 @@ import Jsonwebtoken from '../../Middleware/Jsonwebtoken.js'
 import ErrorHandler from '../../Error/ErrorHandler.js'
 import ResponseHandler from '../../Response/Response.js'
 import QuizQuestionsModel from '../../Model/QuizQuestionsModel.js'
+import questionLimiter from '../../rateLimiter/questionLimiter.js'
 const router = express.Router()
 
-
 router
-  .post('/quiz/:question_id/submission', Jsonwebtoken.verify, async (req, res) => {
+  .post('/quiz/:question_id/submission', questionLimiter.questionSubmit, Jsonwebtoken.verify, async (req, res) => {
       try{
         const { student_id } = req.token
         const { question_id } = req.params
