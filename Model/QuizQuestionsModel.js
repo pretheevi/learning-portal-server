@@ -1,11 +1,7 @@
-import connectDb from "../Database/connectDb.js";
+import db from "../Database/connectDb.js";
 import crypto from 'crypto'
 
 class QuizQuestionsModel{
-  static async getDb() {
-    return await connectDb()
-  }
-
   static async getQuizQuestions(id) {
     const query = `
       SELECT *
@@ -13,7 +9,6 @@ class QuizQuestionsModel{
       WHERE assignment_id = ?
       ORDER BY order_num ASC;
     `
-    const db = await QuizQuestionsModel.getDb()
     try{
         const result = await db.all(query, [id])
         return result
@@ -23,7 +18,6 @@ class QuizQuestionsModel{
   }
 
   static async quizSubmission(student_id, question_id, selected_option, is_correct, points_earned) {
-    const db = await QuizQuestionsModel.getDb()
     const submission_id = crypto.randomUUID()
     const query = `
       INSERT INTO quiz_submissions(submission_id, student_id, question_id, attempt_no, selected_option, is_correct, points_earned, submitted_at)

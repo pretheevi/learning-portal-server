@@ -1,19 +1,19 @@
-import sqlite3 from 'sqlite3'
-import { open } from 'sqlite'
-import path from 'path'
-const databasePath = path.resolve("./Database/learningPortal.db")
+import dotenv from 'dotenv'
+dotenv.config()
+import { createClient } from '@libsql/client'
 
-async function connectDb()  {
-  try{
-    const db = await open({
-      filename: databasePath,
-      driver: sqlite3.Database 
-    })  
-    console.log('Connected to Database Successfully')
-    return db
-  } catch (err) {
-    throw err
-  }
+const client = createClient({
+  url: process.env.TURSO_DATABASE_URL,
+  authToken: process.env.TURSO_AUTH_TOKEN,
+})
+
+const db = {
+  all:   async (sql, args = []) => (await client.execute({ sql, args })).rows,
+  get:   async (sql, args = []) => (await client.execute({ sql, args })).rows[0],
+  run:   async (sql, args = []) => await client.execute({ sql, args }),
+  exec:  async (sql) => await client.execute(sql),
+  batch: async (stmts) => await client.batch(stmts),
+  _client: client
 }
 
-export default connectDb
+export default db

@@ -1,16 +1,10 @@
-import connectDb from './connectDb.js'
+import db from './connectDb.js'
 
 class InitializeTables {
   async init() {
-    let db
-    let transaction = false
-
     try {
-      db = await connectDb()
 
       await db.exec('PRAGMA foreign_keys = ON')
-      await db.exec('BEGIN')
-      transaction = true
 
       await db.exec(this.userTable())
       await db.exec(this.assignmentTable())
@@ -26,12 +20,16 @@ class InitializeTables {
       await db.exec(this.announcementTable())
       
       await db.exec(this.dailyScoresTable())
-      await db.exec(this.index())
+      
+      // Execute index statements separately
+      const indexStatements = this.index().split(';').filter(stmt => stmt.trim())
+      for (const stmt of indexStatements) {
+        await db.exec(stmt + ';')
+      }
 
-      await db.exec('COMMIT')
-      transaction = false
+      console.log('✅ Database initialized successfully!')
     } catch (err) {
-      if (db && transaction) await db.exec('ROLLBACK')
+      console.error('❌ Database initialization failed:', err.message)
       throw err
     }
   }
@@ -238,3 +236,7 @@ class InitializeTables {
 }
 
 export default InitializeTables
+
+// Run initialization if this file is executed directly
+const init = new InitializeTables()
+await init.init()

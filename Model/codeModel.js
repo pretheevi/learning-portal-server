@@ -1,8 +1,6 @@
-import connectDb from '../Database/connectDb.js'
+import db from '../Database/connectDb.js'
 class CodeModel {
   static async getProblem(problemId) {
-    const db = await connectDb()
-
     return await db.get(
       `
       SELECT
@@ -20,8 +18,6 @@ class CodeModel {
   }
 
   static async getExamples(problemId) {
-    const db = await connectDb()
-
     return await db.all(
       `
       SELECT
@@ -39,8 +35,6 @@ class CodeModel {
   }
 
   static async getTestcases(problemId) {
-    const db = await connectDb()
-
     return await db.all(
       `
       SELECT
@@ -58,8 +52,6 @@ class CodeModel {
   }
 
   static async getTestcaseCount(problemId) {
-    const db = await connectDb()
-
     return await db.get(
       `
       SELECT COUNT(*) AS total_cases
@@ -71,8 +63,6 @@ class CodeModel {
   }
 
   static async getLastAttempt(studentId, problemId) {
-    const db = await connectDb()
-
     return await db.get(
       `
       SELECT MAX(attempt_no) AS last_attempt
@@ -85,8 +75,6 @@ class CodeModel {
   }
 
   static async createSubmission(data) {
-    const db = await connectDb()
-
     return await db.run(
       `
       INSERT INTO code_submissions (

@@ -1,16 +1,10 @@
-import connectDb from '../Database/connectDb.js'
+import db from '../Database/connectDb.js'
 import crypto from 'crypto'
 
 class AnnouncementModel {
-  static async getDb() {
-    return await connectDb()
-  }
-
   // admin sends a message
   static async create(admin_id, message, type = 'general') {
-    const db = await AnnouncementModel.getDb()
     const announcement_id = crypto.randomUUID()
-
     await db.run(`
       INSERT INTO announcements (announcement_id, message, sent_by, type, created_at)
       VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
@@ -21,7 +15,6 @@ class AnnouncementModel {
 
   // students fetch all messages — latest first with limit/offset for pagination
   static async getAll(limit = 20, offset = 0) {
-    const db = await AnnouncementModel.getDb()
     return await db.all(`
       SELECT 
         a.announcement_id,
@@ -38,7 +31,6 @@ class AnnouncementModel {
 
   // fetch only new messages after a given timestamp (for polling)
   static async getAfter(timestamp) {
-    const db = await AnnouncementModel.getDb()
     return await db.all(`
       SELECT 
         a.announcement_id,
@@ -54,7 +46,6 @@ class AnnouncementModel {
   }
 
   static async delete(announcement_id) {
-    const db = await AnnouncementModel.getDb()
     await db.run(`
       DELETE FROM announcements WHERE announcement_id = ?
     `, [announcement_id])

@@ -1,9 +1,7 @@
 // seed-aptitude-profit-si-ci-quiz.js
-import connectDb from './connectDb.js'
+import db from './connectDb.js'
 import { randomUUID } from 'crypto'
-
 const assignmentId = randomUUID()
-
 const assignment = {
   assignment_id: assignmentId,
   title: 'Profit, Loss, SI & CI Practice',
@@ -243,19 +241,21 @@ const questions = [
 ]
 
 async function seed() {
-  let db
-  let transaction = false
   try {
-    db = await connectDb()
     await db.exec('PRAGMA foreign_keys = ON')
-    await db.exec('BEGIN')
-    transaction = true
+
+    // Get the next order_num for this skill_type
+    const maxOrder = await db.get(
+      `SELECT COALESCE(MAX(order_num), 0) as max_order FROM assignments WHERE skill_type = ?`,
+      [assignment.skill_type]
+    )
+    assignment.order_num = maxOrder.max_order + 1
 
     await db.run(
-      `INSERT INTO assignments (assignment_id, title, date, type, skill_type) VALUES (?, ?, ?, ?, ?)`,
-      [assignment.assignment_id, assignment.title, assignment.date, assignment.type, assignment.skill_type]
+      `INSERT INTO assignments (assignment_id, title, date, type, skill_type, order_num) VALUES (?, ?, ?, ?, ?, ?)`,
+      [assignment.assignment_id, assignment.title, assignment.date, assignment.type, assignment.skill_type, assignment.order_num]
     )
-    console.log(`✅ Assignment inserted: ${assignment.title}`)
+    console.log(`✅ Assignment inserted: ${assignment.title} (order_num: ${assignment.order_num})`)
 
     for (const q of questions) {
       await db.run(
@@ -294,15 +294,10 @@ async function seed() {
     }
     console.log(`✅ Access seeded for ${students.length} students (is_unlocked: ${isFirst ? 1 : 0})`)
 
-    await db.exec('COMMIT')
-    transaction = false
     console.log('\n🎉 Seeding complete! 20 Profit/Loss SI CI questions inserted.')
   } catch (err) {
-    if (db && transaction) await db.exec('ROLLBACK')
     console.error('❌ Seeding failed:', err.message)
     throw err
-  } finally {
-    if (db) await db.close()
   }
 }
 

@@ -1,6 +1,7 @@
-import connectDb from '../Database/connectDb.js'
+import db from '../Database/connectDb.js'
 import Abs from './Abs.js'
 import crypto from 'crypto'
+import Assignment from './assignmentModel.js'
 
 class StudentModel extends Abs {
   #name
@@ -18,42 +19,15 @@ class StudentModel extends Abs {
     this.#bio = null
   }
 
-  static async getDb() {
-    return await connectDb()
-  }
-
   async create() {
-    const db = await StudentModel.getDb()
     const student_id = crypto.randomUUID()
-    const query = `
-      INSERT INTO students
-      (student_id, name, email, password_hash, avatar, bio, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-    `
-    await db.exec('BEGIN')
-    try {
-      const result = await db.run(query, [
-        student_id,
-        this.#name,
-        this.#email,
-        this.#password_hash,
-        this.#avatar,
-        this.#bio
-      ])
-
-      await db.exec('COMMIT')
-      return result
-
-    } catch (originalError) {
-      try {
-        await db.exec('ROLLBACK')
-      } catch (rollbackError) {
-        rollbackError.cause = originalError
-        throw rollbackError
-      }
-
-      throw originalError
-    }
+    const result = await db.run(
+      `INSERT INTO students (student_id, name, email, password_hash, avatar, bio, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+      [student_id, this.#name, this.#email, this.#password_hash, this.#avatar, this.#bio]
+    )
+    await Assignment.seedAccessForStudent(student_id)
+    return result
   }
 
   setData(name, email, password_hash, avatar = null, bio = null) {
@@ -64,31 +38,25 @@ class StudentModel extends Abs {
     this.#bio = bio
   }
 
-static async read(id = null, email = null) {
-  const db = await this.getDb()
-  let query = 'SELECT student_id, name, email, password_hash, avatar, bio, created_at FROM students'
-  let query2 = `
-  
-  `
-  const conditions = []
-  const values = []
-  if (id) {
-    conditions.push('student_id = ?')
-    values.push(id)
+  static async read(id = null, email = null) {
+    let query = 'SELECT student_id, name, email, password_hash, avatar, bio, created_at FROM students'
+    const conditions = []
+    const values = []
+    if (id) {
+      conditions.push('student_id = ?')
+      values.push(id)
+    }
+    if (email) {
+      conditions.push('email = ?')
+      values.push(email)
+    }
+    if (conditions.length) {
+      query += ' WHERE ' + conditions.join(' AND ')
+    }
+    return await db.get(query, values)
   }
-  if (email) {
-    conditions.push('email = ?')
-    values.push(email)
-  }
-  if (conditions.length) {
-    query += ' WHERE ' + conditions.join(' AND ')
-  }
-  return await db.get(query, values)
-}
 
   static async getStudentSkillStats(student_id) {
-    const db = await StudentModel.getDb()
-
     const rows = await db.all(`
       WITH best_scores AS (
         SELECT 
@@ -123,7 +91,6 @@ static async read(id = null, email = null) {
       ORDER BY a.skill_type, a.type
     `, [student_id])
 
-    // ✅ transform flat rows into { quiz: {}, coding: {} }
     const result = { quiz: {}, coding: {} }
 
     for (const row of rows) {
