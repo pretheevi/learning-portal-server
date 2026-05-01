@@ -34,16 +34,15 @@ async function websocketHandler(ws, req) {
     console.error('WebSocket error', err)
     clients.delete(ws)
   })  
+}
 
-  app.locals.broadCast = (message) => {
-    const payload = JSON.stringify({ type: 'announcement', data: message })
-    for (const client of clients.keys()) {
-      if (client.readyState === 1) {
-        client.send(payload)
-      }
-    }
-    console.log(`Broadcasted message: ${message.message} to ${clients.size} clients`)
+// Define ONCE, outside handler
+export function broadCast(message) {
+  const payload = JSON.stringify({ type: 'announcement', data: message })
+  for (const client of clients.keys()) {
+    if (client.readyState === 1) client.send(payload)
   }
+  console.log(`Broadcasted to ${clients.size} clients`)
 }
 
 export default websocketHandler

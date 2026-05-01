@@ -13,7 +13,7 @@ import CodeRoute from './Routers/Dashboard/code.js'
 import Jsonwebtoken from './Middleware/Jsonwebtoken.js'
 import AnnouncementModel from './Model/AnnouncementModel.js'
 import adminProfileRoute from './Routers/Admin/profile.js'
-import websocketHandler from './Routers/ws/websocket.js'
+import websocketHandler, { broadCast } from './Routers/ws/websocket.js'
 
 const app = express()
 async function initializeServerAndDatabase() {
@@ -22,7 +22,8 @@ async function initializeServerAndDatabase() {
     await dbInitializer.init()
     const server = http.createServer(app)
     const wss = new WebSocketServer({ server })
-    // wss.on('connection', websocketHandler)
+    wss.on('connection', websocketHandler)
+    app.locals.broadCast = broadCast
     server.listen(8080, '0.0.0.0', () => console.log('Server listening on port 8080'))
   } catch (err) { process.exit(1) }
 }
@@ -47,4 +48,3 @@ app.use('/api/dashboard', assignmentRoute)
 app.use('/api/dashboard', questionRoute)
 app.use('/api/dashboard', profileRoute)
 app.use('/api/dashboard', CodeRoute)
-    
