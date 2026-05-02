@@ -37,6 +37,10 @@ app.use(cors({
   allowedHeaders: ['Content-Type','Authorization']
 }))
 app.use(express.json({ limit: '10mb' }))
+app.use((req, res, next) => {
+  console.log('Client IP:', req.ip, '| X-Forwarded-For:', req.headers['x-forwarded-for']);
+  next();
+});
 app.use((req, res, next) => { console.log(`${req.method}: ${req.originalUrl}`); next() })
 app.use(express.urlencoded({ extended: true, limit: '10mb' }))
 app.get('/health', (req, res) => res.send("Health check. Hello from Node.js"))
