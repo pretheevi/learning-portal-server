@@ -28,7 +28,7 @@ async function initializeServerAndDatabase() {
   } catch (err) { process.exit(1) }
 }
 initializeServerAndDatabase()
-
+app.set('trust proxy', 1); 
 app.use(helmet())
 app.use(cors({
   origin: ['http://localhost:5173', 'http://localhost:5174', 'https://learning-portal-client.onrender.com'],
@@ -36,6 +36,7 @@ app.use(cors({
   methods: ['GET','POST','PUT','DELETE','OPTIONS'],
   allowedHeaders: ['Content-Type','Authorization']
 }))
+
 app.use(express.json({ limit: '10mb' }))
 app.use((req, res, next) => {
   console.log('Client IP:', req.ip, '| X-Forwarded-For:', req.headers['x-forwarded-for']);
