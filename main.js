@@ -16,6 +16,7 @@ import adminAnnouncementRoute from './Routers/Admin/announcement.js'
 import websocketHandler, { broadCast } from './Routers/ws/websocket.js'
 
 const app = express()
+app.set('trust proxy', 3); 
 async function initializeServerAndDatabase() {
   try {
     const dbInitializer = new InitializeTables()
@@ -28,7 +29,7 @@ async function initializeServerAndDatabase() {
   } catch (err) { process.exit(1) }
 }
 initializeServerAndDatabase()
-app.set('trust proxy', 1); 
+
 app.use(helmet())
 app.use(cors({
   origin: ['http://localhost:5173', 'http://localhost:5174', 'https://learning-portal-client.onrender.com'],
