@@ -16,7 +16,7 @@ import adminAnnouncementRoute from './Routers/Admin/announcement.js'
 import websocketHandler, { broadCast } from './Routers/ws/websocket.js'
 
 const app = express()
-app.set('trust proxy', 3); 
+app.set('trust proxy', 2); 
 async function initializeServerAndDatabase() {
   try {
     const dbInitializer = new InitializeTables()
