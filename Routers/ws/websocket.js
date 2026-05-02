@@ -15,8 +15,13 @@ async function websocketHandler(ws, req) {
     decoded = Jsonwebtoken.verifyToken(token)
   } catch(err) {
     ws.close(4002, 'Invalid token')
+    return
   }
 
+  if(decoded.role !== 'student') {
+    clients.set(ws, {student_id: decoded.student_id, name: decoded.name})
+    return
+  }
   clients.set(ws, {student_id: decoded.student_id, name: decoded.name})
   try {
     const history = await AnnouncementModel.getAll(20, 0)

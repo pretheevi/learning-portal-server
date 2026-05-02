@@ -10,10 +10,7 @@ router.post('/announcement', Jsonwebtoken.verifyAdmin, async (req, res) => {
   try {
     const { message, type } = req.body
     const announcement = await AnnouncementModel.create(req.admin.admin_id, message, type)
-
-    // ✅ broadcast to all connected WS clients
-    req.app.locals.broadcast(announcement)
-
+    req.app.locals.broadCast(announcement)
     return ResponseHandler(res, 201, 'success', announcement)
   } catch (err) {
     ErrorHandler.Error500(err, res)

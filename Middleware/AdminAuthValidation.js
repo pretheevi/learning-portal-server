@@ -3,7 +3,7 @@ import ErrorHandler from "../Error/ErrorHandler.js"
 class AdminAuthValidator {
   static emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   static nameRegex = /^[A-Za-z ]{2,50}$/
-  static secretKey = process.env.ADMIN_SECRET_KEY  // ✅ extra protection
+  static secretKey = process.env.ADMIN_SECRET_KEY
 
   static signInValidate(req, res, next) {
     try {

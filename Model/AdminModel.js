@@ -6,16 +6,13 @@ class AdminModel {
   static async create(name, email, password) {
     const admin_id = crypto.randomUUID()
     const password_hash = await bcrypt.hash(password, 10)
-    await db.batch([{sql: 'BEGIN'}])
     try {
       await db.run(`
         INSERT INTO admins (admin_id, name, email, password_hash, created_at)
         VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
       `, [admin_id, name, email, password_hash])
-      await db.batch([{sql: 'COMMIT'}])
       return { admin_id, name, email }
     } catch (err) {
-      await db.batch([{sql: 'ROLLBACK'}])
       throw err
     }
   }
