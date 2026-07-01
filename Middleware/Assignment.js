@@ -12,7 +12,7 @@ class AssignmentValidation {
         'any.required': 'Assignment type is required'
       }),
     skill_type: joi.string()
-      .valid('html', 'css', 'javascript', 'linux', 'os', 'github', 'react', 'node', 'sqlite', 'aptitude')
+      .valid('html', 'css', 'javascript', 'linux', 'os', 'github', 'react', 'node', 'sqlite', 'aptitude', 'python')
       .required()
       .messages({
         'any.only': 'Invalid Skill Type',
