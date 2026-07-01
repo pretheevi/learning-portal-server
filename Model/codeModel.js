@@ -8,15 +8,15 @@ class CodeModel {
         assignment_id,
         title,
         description,
+        function_name,
         language,
         difficulty,
         created_at
       FROM coding_problems
-      WHERE assignment_id = ?`,
+      WHERE problem_id = ?`,
       [problemId]
     )
   }
-
   static async getExamples(problemId) {
     return await db.all(
       `
@@ -33,7 +33,6 @@ class CodeModel {
       [problemId]
     )
   }
-
   static async getTestcases(problemId) {
     return await db.all(
       `
@@ -50,7 +49,6 @@ class CodeModel {
       [problemId]
     )
   }
-
   static async getTestcaseCount(problemId) {
     return await db.get(
       `
@@ -61,7 +59,6 @@ class CodeModel {
       [problemId]
     )
   }
-
   static async getLastAttempt(studentId, problemId) {
     return await db.get(
       `
@@ -73,7 +70,6 @@ class CodeModel {
       [studentId, problemId]
     )
   }
-
   static async createSubmission(data) {
     return await db.run(
       `
@@ -102,5 +98,4 @@ class CodeModel {
     )
   }
 }
-
 export default CodeModel

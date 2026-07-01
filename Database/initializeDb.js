@@ -117,8 +117,10 @@ class InitializeTables {
       assignment_id   TEXT NOT NULL,
       title           TEXT NOT NULL CHECK(length(title) <= 200),
       description     TEXT NOT NULL,
+      function_name   TEXT NOT NULL DEFAULT 'solve',
       language        TEXT DEFAULT 'javascript',
-      difficulty      TEXT DEFAULT 'easy' CHECK(difficulty IN ('easy','medium','hard')),
+      difficulty      TEXT DEFAULT 'easy'
+                      CHECK(difficulty IN ('easy','medium','hard')),
       created_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (assignment_id) REFERENCES assignments(assignment_id)
     );`

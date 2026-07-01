@@ -11,10 +11,11 @@ class CodeAssignmentValidation {
 
   static runCode(req, res, next) {
     try {
-      const { problem_id, code, language } = req.body
+      const { problem_id, code, language, function_name } = req.body
       if (!problem_id || typeof problem_id !== 'string') return ErrorHandler.Error400(res, 'Invalid problem id')
       if (!code || typeof code !== 'string' || !code.trim()) return ErrorHandler.Error400(res, 'Code is required')
       if (!language || typeof language !== 'string') return ErrorHandler.Error400(res, 'Language is required')
+      if (!function_name || typeof function_name !== 'string') return ErrorHandler.Error400(res, 'Function name is required')
       if (!['javascript', 'python', 'java'].includes(language)) return ErrorHandler.Error400(res, 'Unsupported language')
       next()
     } catch (err) {return ErrorHandler.Error500(err, res)}
